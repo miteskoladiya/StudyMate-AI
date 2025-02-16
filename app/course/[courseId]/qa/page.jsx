@@ -130,23 +130,6 @@ const Qa = () => {
         <Button onClick={() => router.back()}>Go to Course Page</Button>
     </div>
 )}
-{qaData.length === 0 && (
-    <div className="text-center py-16 bg-white rounded-xl shadow-md">
-        <div className="max-w-md mx-auto">
-            <p className="text-gray-500 text-lg mb-6">
-                No questions are available yet.
-            </p>
-            <Button 
-                onClick={getQAContent}
-                variant="outline" 
-                className="hover:scale-105 transition-transform"
-            >
-                <RefreshCcw className={loading ? "animate-spin mr-2" : "mr-2"}/>
-                Refresh Content
-            </Button>
-        </div>
-    </div>
-)}
         </div>
 
         

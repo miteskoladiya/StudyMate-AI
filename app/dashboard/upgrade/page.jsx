@@ -21,8 +21,13 @@ function Upgrade() {
             .from(USER_TABLE)
             .where(eq(USER_TABLE.email, user?.primaryEmailAddress?.emailAddress));
 
-        setUserDetails(result[0]);
+            if (result && result[0]) {
+                setUserDetails(result[0]);
+                console.log("User membership status:", result[0].isMember);
+            }
     };
+
+    console.log(GetUserDetail.isMember);
 
     const OnCheckoutClick = async () => { 
         const result = await axios.post("/api/payment/checkout", {
@@ -56,7 +61,7 @@ function Upgrade() {
                     <div className="text-center">
                         <h3 className="text-lg font-medium text-gray-900">Free</h3>
                         <p className="mt-4 text-4xl font-bold">
-                            $0<span className="text-xl font-normal">/month</span>
+                            ₹0<span className="text-xl font-normal">/month</span>
                         </p>
 
                         <div className="mt-6 space-y-3">
@@ -78,7 +83,7 @@ function Upgrade() {
                     <div className="text-center">
                         <h3 className="text-lg font-medium text-blue-600">Monthly</h3>
                         <p className="mt-4 text-4xl font-bold">
-                            $9.99<span className="text-xl font-normal">/month</span>
+                            ₹999<span className="text-xl font-normal">/month</span>
                         </p>
 
                         <div className="mt-6 space-y-3">
@@ -89,7 +94,7 @@ function Upgrade() {
                         </div>
 
                         <div className="mt-8">
-                            {userDetail?.member == false ? (
+                            {!userDetail?.isMember ? (
                                 <Button
                                     onClick={OnCheckoutClick}
                                     className="w-full bg-blue-600 hover:bg-blue-700"

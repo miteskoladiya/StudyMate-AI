@@ -11,7 +11,13 @@ const CourseCardItem = ({ course }) => {
             <div>
                 <div className="flex justify-between items-center">
                     <Image src={"/knowledge.png"} alt="other" width={50} height={50} />
-                    <h2 className="text-[10px] p-1 px-2 rounded-full bg-blue-600 text-white">20 jan 2025</h2>
+<h2 className="text-[10px] p-1 px-2 rounded-full bg-blue-600 text-white">
+  {new Date().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  })}
+</h2>
                 </div>
                 <h2 className="mt-3 font-medium text-lg">{course?.courseLayout?.course_name}</h2>
                 <p className="text-sm mt-2 text-gray-500 line-clamp-2">{course?.courseLayout?.course_summary}</p>

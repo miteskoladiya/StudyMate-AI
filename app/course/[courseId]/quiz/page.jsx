@@ -27,15 +27,20 @@ const Quiz = () => {
     }, []);
 
     const GetQuiz = async () => {
-        const result = await axios.post("/api/study-type", {
+        try {
+          const result = await axios.post("/api/study-type", {
             courseId: courseId,
             studyType: "Quiz",
-        });
-        setQuizData(result.data);
-        setQuiz(result.data.content?.questions);
-        console.log(result);
-
-    };
+          });
+          
+          // Add null check and default value
+          setQuiz(result.data.content?.questions || []);  // Fallback to empty array
+          
+        } catch (error) {
+          console.error("Error fetching quiz:", error);
+          setQuiz([]);  // Ensure quiz stays as array on error
+        }
+      };
     const checkAnswer = (userAnswer, currentQue) => {
 
         setCorrectAns(currentQue?.correctAnswer);
@@ -73,7 +78,7 @@ const Quiz = () => {
         <div>
             <h2 className="font-bold text-2xl text-center mb-4">Quiz</h2>
 
-            {quiz?.length !== stepCount ? (
+            {quiz?.length !== stepCount  ? (
                 <>
                     <StepProgress
                         data={quiz}
