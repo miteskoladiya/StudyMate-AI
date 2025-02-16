@@ -10,12 +10,13 @@ const ViewNotes = () => {
   const [notes, setNotes] = useState([]);
   const [stepCount, setStepCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const router = useRouter();
-  const [pollingCount, setPollingCount] = useState(0);
 
-  // Improved fetch with polling
-  const GetNotes = async (abortController) => {
+  const getNotes = async () => {
     try {
+      setLoading(true);
+      setError("");
       const { data } = await axios.post("/api/study-type", {
         courseId,
         studyType: "notes",
@@ -23,77 +24,49 @@ const ViewNotes = () => {
 
       if (data?.length > 0) {
         setNotes(data);
-        return true; // Content found
+      } else {
+        setError("No notes found for this course");
       }
-      return false; // Continue polling
     } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error("Fetch error:", error);
-      }
-      return false;
+      console.error("Fetch error:", error);
+      setError("Failed to load notes. Please try refreshing.");
+    } finally {
+      setLoading(false);
     }
-
   };
+
   const handleRefresh = async () => {
-    setLoading(true);
-    setPollingCount(0);
-    await GetNotes();
-    setLoading(false);
+    await getNotes();
   };
 
   useEffect(() => {
-    const abortController = new AbortController();
-    let pollingInterval;
-
-    const startPolling = async () => {
-      let attempts = 0;
-      const maxAttempts = 10; // ~2 minutes total
-      
-      const poll = async () => {
-        attempts++;
-        setPollingCount(attempts);
-        const success = await GetNotes(abortController);
-        
-        if (success || attempts >= maxAttempts) {
-          clearInterval(pollingInterval);
-          setLoading(false);
-        }
-      };
-
-      // Immediate first check
-      await poll();
-      // Subsequent polls every 15 seconds
-      pollingInterval = setInterval(poll, 15000);
-    };
-
-    startPolling();
-
-    return () => {
-      abortController.abort();
-      clearInterval(pollingInterval);
-    };
+    getNotes();
   }, [courseId]);
 
-  
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
         <RefreshCcw className="animate-spin h-6 w-6" />
-        <div className="ml-2">
-          <p>Preparing your notes...</p>
-          <p className="text-sm text-muted-foreground">
-            Check {pollingCount} of 10
-          </p>
-        </div>
+        <p className="ml-2">Loading notes...</p>
       </div>
     );
   }
 
- 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[200px] gap-4">
+        <p className="text-red-500">{error}</p>
+        <Button onClick={handleRefresh}>
+          <RefreshCcw className="mr-2 h-4 w-4" />
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div>
-      {/* Progress controls */}
-      <div className="flex gap-5 items-center">
+       <div className="flex gap-5 items-center">
         {stepCount !== 0 && (
           <Button size="sm" onClick={() => setStepCount(Math.max(0, stepCount - 1))}>
             Previous
@@ -116,20 +89,24 @@ const ViewNotes = () => {
         )}
       </div>
 
-      
 
-      {/* Content display */}
-      <div className="mt-7">
-        { notes[stepCount]?.notes && (
+      <div className="mt-7 prose max-w-none">
+        {notes[stepCount]?.notes && (
           <div
             dangerouslySetInnerHTML={{
-              __html: cleanNotesContent(notes[stepCount].notes)
+              __html: notes[stepCount].notes
+              .replace(/```html/g, '')
+              .replace(/[\r\n]+/g, ' ')
+              .replace(/\\n/g, ' ')
+              .replace(/\s+/g, ' ')
+              .trim()
+              .replace(/["]/g, '')
+              .replace(/[\[\]{}]/g, '')
             }}
           />
         )}
       </div>
 
-      {/* End state */}
       {stepCount === notes.length - 1 && (
         <div className="flex items-center gap-5 flex-col justify-center mt-8 p-6 bg-gray-50 rounded-lg">
           <h2 className="text-xl font-semibold text-gray-700">End of Notes</h2>
@@ -138,18 +115,6 @@ const ViewNotes = () => {
       )}
     </div>
   );
-};
-
-// Add content cleaning function
-const cleanNotesContent = (html) => {
-  return html
-    .replace(/```html/g, '')
-    .replace(/[\r\n]+/g, ' ')
-    .replace(/\\n/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/["]/g, '')
-    .replace(/[\[\]{}]/g, '');
 };
 
 export default ViewNotes;
