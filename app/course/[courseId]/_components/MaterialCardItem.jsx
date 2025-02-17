@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation"; // Add missing import
 
-const MaterialCardItem = ({ item, studyTypeContent, course, refreshData }) => {
+const MaterialCardItem = ({ item, studyTypeContent, course, refreshData ,href}) => {
     const router = useRouter(); // Initialize router
     const [loading, setLoading] = useState(false);
     const [localContent, setLocalContent] = useState(false);
@@ -60,6 +60,7 @@ const MaterialCardItem = ({ item, studyTypeContent, course, refreshData }) => {
     };
 
     return (
+        <Link href={href}>
         <div className={`border shadow-md rounded-lg p-5 flex flex-col items-center
             ${!hasContent() && "grayscale"}`}
         >
@@ -110,6 +111,7 @@ const MaterialCardItem = ({ item, studyTypeContent, course, refreshData }) => {
                 </Button>
             )}
         </div>
+        </Link>
     );
 };
 

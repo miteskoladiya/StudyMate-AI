@@ -3,7 +3,6 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { RefreshCcw } from "lucide-react";
 
 const ViewNotes = () => {
   const { courseId } = useParams();
@@ -66,7 +65,7 @@ const ViewNotes = () => {
             }}
           />
 
-{stepCount === notes.length  && (
+{notes.length == stepCount   && (
         <div className="flex items-center gap-5 flex-col justify-center mt-8 p-6 bg-gray-50 rounded-lg">
           <h2 className="text-xl font-semibold text-gray-700">End of Notes</h2>
           <Button onClick={() => router.back()}>Go to Course Page</Button>
