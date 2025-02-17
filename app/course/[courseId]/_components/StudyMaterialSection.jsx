@@ -17,7 +17,7 @@ const StudyMaterialSection = ({ courseId,course }) => {
     },
     {
       name: "Flashcard",
-      desc: "Flashcard to remember the concepts",
+      desc: "Flashcard to remember concepts",
       icon: "/flashcard.png",
       path: "/flashcards",
       type:'Flashcards',

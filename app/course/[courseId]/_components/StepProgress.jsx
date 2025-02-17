@@ -5,9 +5,8 @@ const StepProgress = ({ data, stepCount, setStepCount, isLastStep }) => {
     return (
         <div className="flex items-center justify-between">
             <Button
+            className="text-white bg-primary"
                 onClick={() => setStepCount(stepCount - 1)}
-                disabled={stepCount === 0}
-                variant="outline"
             >
                 Previous
             </Button>
@@ -16,8 +15,8 @@ const StepProgress = ({ data, stepCount, setStepCount, isLastStep }) => {
             </div>
             {!isLastStep && (
                 <Button
+                className="text-white bg-primary"
                     onClick={() => setStepCount(stepCount + 1)}
-                    variant="outline"
                 >
                     Next
                 </Button>
